@@ -15,6 +15,8 @@ func NewBelief(name string) (b *Belief) {
 	b = new(Belief)
 	b.Name = name
 	b.Uuid, _ = uuid.NewRandom()
+	b.Perception = make(map[*Behaviour]float64)
+	b.Relationship = make(map[*Belief]float64)
 
 	return
 }
