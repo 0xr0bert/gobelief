@@ -111,6 +111,7 @@ func (a *Agent) ActivationChange(
 	}
 }
 
+// Min returns the smaller of a or b.
 func Min(a, b float64) float64 {
 	if a < b {
 		return a
@@ -119,6 +120,7 @@ func Min(a, b float64) float64 {
 	}
 }
 
+// Max returns the larger of a or b.
 func Max(a, b float64) float64 {
 	if a > b {
 		return a
