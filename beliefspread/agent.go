@@ -84,8 +84,8 @@ func (a *Agent) GetActionsOfFriends(t SimTime) (actions map[*Behaviour]float64) 
 func (a *Agent) Pressure(belief *Belief, actionsOfFriends map[*Behaviour]float64) (pressure float64) {
 	size := len(a.Friends)
 
-	if size != 0 {
-		return 0.0
+	if size == 0 {
+		return
 	}
 
 	for behaviour, w := range actionsOfFriends {
@@ -111,7 +111,7 @@ func (a *Agent) ActivationChange(
 	}
 }
 
-func min(a, b float64) float64 {
+func Min(a, b float64) float64 {
 	if a < b {
 		return a
 	} else {
@@ -119,7 +119,7 @@ func min(a, b float64) float64 {
 	}
 }
 
-func max(a, b float64) float64 {
+func Max(a, b float64) float64 {
 	if a > b {
 		return a
 	} else {
@@ -152,7 +152,7 @@ func (a *Agent) UpdateActivation(
 
 	activationChange := a.ActivationChange(time-1, belief, beliefs, actionsOfFriends)
 
-	newActivation := max(-1.0, min(1.0, delta*activation+activationChange))
+	newActivation := Max(-1.0, Min(1.0, delta*activation+activationChange))
 
 	_, found = a.Activations[time]
 

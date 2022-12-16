@@ -1,4 +1,4 @@
-package main
+package runner
 
 import (
 	"math"
@@ -38,6 +38,26 @@ func (spec *BeliefSpec) ToBelief(behaviours []*b.Behaviour) *b.Belief {
 	}
 
 	return belief
+}
+
+func (spec *BeliefSpec) LinkBeliefRelationships(beliefs []*b.Belief) {
+	uuidBeliefs := make(map[uuid.UUID]*b.Belief)
+	for _, belief := range beliefs {
+		uuidBeliefs[belief.Uuid] = belief
+	}
+
+	thisBelief := uuidBeliefs[spec.Uuid]
+
+	if thisBelief == nil {
+		return
+	}
+
+	for u, v := range spec.Relationships {
+		b2 := uuidBeliefs[u]
+		if b2 != nil {
+			thisBelief.Relationship[b2] = v
+		}
+	}
 }
 
 type PerformanceRelationshipSpec struct {

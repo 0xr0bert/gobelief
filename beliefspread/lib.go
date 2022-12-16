@@ -1,3 +1,3 @@
 package beliefspread
 
-type SimTime int32
+type SimTime uint32
