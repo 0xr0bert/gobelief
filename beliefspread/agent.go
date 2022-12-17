@@ -6,14 +6,28 @@ import (
 	"github.com/google/uuid"
 )
 
+// An Agent in the simulation.
 type Agent struct {
-	Uuid        uuid.UUID
+	// The UUID of the agent.
+	Uuid uuid.UUID
+	// The activation of the agent's beliefs at a given time.
+	//
+	// This should always be between -1 and +1.
 	Activations map[SimTime]map[*Belief]float64
-	Friends     map[*Agent]float64
-	Actions     map[SimTime]*Behaviour
-	Deltas      map[*Belief]float64
+	// The relationship of the agent to other agents.
+	//
+	// This should be in the range [0, 1]
+	Friends map[*Agent]float64
+	// The actions of the agent at a given time.
+	Actions map[SimTime]*Behaviour
+	// The deltas of the agent's beliefs.
+	//
+	// This should be in the range [-1, +1] and is applied multiplicatively to
+	// the activation of the belief at the next time step.
+	Deltas map[*Belief]float64
 }
 
+// Create a new agent with a randomly generated UUID.
 func NewAgent() (a *Agent) {
 	a = new(Agent)
 	a.Uuid, _ = uuid.NewRandom()
@@ -25,14 +39,18 @@ func NewAgent() (a *Agent) {
 	return
 }
 
+// Gets the weighted relationship between two beliefs.
+//
+// This is the compatibility for holding b2, given that the Agent already holds
+// b1.
+//
+// This is equal to the activation of b1 multiplied by the relationship between
+// b1 and b2.
+//
+// Returns nil if the agent has no activation for b1, or if b1 and b2 have no
+// relationship.
 func (a *Agent) WeightedRelationship(t SimTime, b1 *Belief, b2 *Belief) *float64 {
-	acts, found := a.Activations[t]
-
-	if !found {
-		return nil
-	}
-
-	b1Act, found := acts[b1]
+	b1Act, found := a.Activations[t][b1]
 
 	if !found {
 		return nil
@@ -49,6 +67,12 @@ func (a *Agent) WeightedRelationship(t SimTime, b1 *Belief, b2 *Belief) *float64
 	return &returnVal
 }
 
+// Gets the context for holding the Belief b
+//
+// This is the compatibility for holding b, given that the Agent all the beliefs
+// the agent holds.
+//
+// This is an average of the weighted relationships for every Belief in beliefs.
 func (a *Agent) Contextualise(t SimTime, b *Belief, beliefs []*Belief) (context float64) {
 	size := len(beliefs)
 
@@ -69,6 +93,10 @@ func (a *Agent) Contextualise(t SimTime, b *Belief, beliefs []*Belief) (context 
 	return
 }
 
+// Gets the actions of the agent's friends at a given time.
+//
+// The key is the behaviour, the value is the total weight of friends who
+// performed that behaviour.
 func (a *Agent) GetActionsOfFriends(t SimTime) (actions map[*Behaviour]float64) {
 	actions = make(map[*Behaviour]float64)
 	for friend, w := range a.Friends {
@@ -81,7 +109,14 @@ func (a *Agent) GetActionsOfFriends(t SimTime) (actions map[*Behaviour]float64) 
 	return
 }
 
-func (a *Agent) Pressure(belief *Belief, actionsOfFriends map[*Behaviour]float64) (pressure float64) {
+// Gets the pressure the Agent feels to adopt a Belief given the actions of
+// their friends.
+//
+// This does not take into account the context of the Belief.
+func (a *Agent) Pressure(
+	belief *Belief,
+	actionsOfFriends map[*Behaviour]float64,
+) (pressure float64) {
 	size := len(a.Friends)
 
 	if size == 0 {
@@ -97,6 +132,10 @@ func (a *Agent) Pressure(belief *Belief, actionsOfFriends map[*Behaviour]float64
 	return
 }
 
+// Gets the change in activation for the Agent as a result of observed
+// Behaviour.
+//
+// This does take into account the context of the Belief.
 func (a *Agent) ActivationChange(
 	time SimTime,
 	belief *Belief,
@@ -129,6 +168,8 @@ func Max(a, b float64) float64 {
 	}
 }
 
+// Update the activation for a given belief and time, given the actions of
+// the agents friends.
 func (a *Agent) UpdateActivation(
 	time SimTime,
 	belief *Belief,
@@ -167,6 +208,7 @@ func (a *Agent) UpdateActivation(
 	return nil
 }
 
+// Update the activation for all beliefs at a given time.
 func (a *Agent) UpdateActivationForAllBeliefs(
 	time SimTime,
 	beliefs []*Belief,
