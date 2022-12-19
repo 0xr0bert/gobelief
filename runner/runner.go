@@ -38,12 +38,19 @@ func (r *Runner) Run() {
 	)
 	r.tickBetween(r.Configuration.StartTime, r.Configuration.EndTime)
 	r.Logger.Info("Ending simulation")
+	var err error
 	if r.Configuration.FullOutput {
-		r.serializeFullOutput()
+		err = r.serializeFullOutput()
 	} else {
-		r.serializeOutput()
+		err = r.serializeOutput()
 	}
 
+	if err != nil {
+		r.Logger.Error(
+			"Error serializing output",
+			zap.Error(err),
+		)
+	}
 }
 
 func (r *Runner) serializeFullOutput() error {
