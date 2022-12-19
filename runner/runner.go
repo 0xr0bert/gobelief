@@ -75,19 +75,20 @@ func (r *Runner) serializeFullOutput() error {
 		return err
 	}
 
-	encoder, err := zstd.NewWriter(r.Configuration.OutputFile)
+	zstdEncoder, err := zstd.NewWriter(r.Configuration.OutputFile)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = encoder.Write(data)
+	encoder := json.NewEncoder(zstdEncoder)
+
+	err = encoder.Encode(data)
 	if err != nil {
-		encoder.Close()
+		zstdEncoder.Close()
 		return err
 	}
-	encoder.Flush()
-	encoder.Close()
+	zstdEncoder.Close()
 	return nil
 }
 
