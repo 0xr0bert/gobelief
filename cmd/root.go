@@ -237,6 +237,19 @@ to quickly create a Cobra application.`,
 
 		config.Prs = prs
 
+		fullOutput, err := cmd.Flags().GetBool("full")
+
+		if err != nil {
+			logger.Error(
+				"Failed to get full output flag",
+				zap.String("errorMessage", err.Error()),
+			)
+
+			return
+		}
+
+		config.FullOutput = fullOutput
+
 		simRunner := runner.Runner{
 			Configuration: config,
 			Logger:        logger,
@@ -262,6 +275,7 @@ func init() {
 	rootCmd.Flags().StringP("beliefs", "c", "", "The beliefs.json file")
 	rootCmd.Flags().StringP("agents", "a", "", "The agents.json.zst file")
 	rootCmd.Flags().StringP("prs", "p", "", "The prs.json file")
+	rootCmd.Flags().Bool("full", false, "Whether to serialize the full state of the simulation")
 }
 
 func readBehavioursJson(path string) ([]*b.Behaviour, error) {
@@ -381,6 +395,10 @@ func readPrsJson(
 
 	var specs []runner.PerformanceRelationshipSpec
 	err = json.Unmarshal(data, &specs)
+
+	if err != nil {
+		return nil, err
+	}
 
 	uuidBeliefs := make(map[uuid.UUID]*b.Belief, len(beliefs))
 	for _, belief := range beliefs {

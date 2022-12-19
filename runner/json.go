@@ -74,6 +74,39 @@ type AgentSpec struct {
 	Friends     map[uuid.UUID]float64               `json:"friends"`
 }
 
+func NewAgentSpecFromAgent(a *b.Agent) (spec *AgentSpec) {
+	spec = new(AgentSpec)
+	spec.Uuid = a.Uuid
+	spec.Actions = make(map[b.SimTime]uuid.UUID, len(a.Actions))
+
+	for time, action := range a.Actions {
+		spec.Actions[time] = action.Uuid
+	}
+
+	spec.Activations = make(map[b.SimTime]map[uuid.UUID]float64, len(a.Activations))
+
+	for time, acts := range a.Activations {
+		spec.Activations[time] = make(map[uuid.UUID]float64, len(acts))
+		for belief, act := range acts {
+			spec.Activations[time][belief.Uuid] = act
+		}
+	}
+
+	spec.Deltas = make(map[uuid.UUID]float64, len(a.Deltas))
+
+	for belief, delta := range a.Deltas {
+		spec.Deltas[belief.Uuid] = delta
+	}
+
+	spec.Friends = make(map[uuid.UUID]float64, len(a.Friends))
+
+	for friend, w := range a.Friends {
+		spec.Friends[friend.Uuid] = w
+	}
+
+	return
+}
+
 func (spec *AgentSpec) ToAgent(
 	behaviours []*b.Behaviour,
 	beliefs []*b.Belief,

@@ -19,6 +19,7 @@ type Configuration struct {
 	StartTime  b.SimTime
 	EndTime    b.SimTime
 	OutputFile *os.File
+	FullOutput bool
 }
 
 type Runner struct {
@@ -37,8 +38,50 @@ func (r *Runner) Run() {
 	)
 	r.tickBetween(r.Configuration.StartTime, r.Configuration.EndTime)
 	r.Logger.Info("Ending simulation")
-	r.serializeOutput()
+	if r.Configuration.FullOutput {
+		r.serializeFullOutput()
+	} else {
+		r.serializeOutput()
+	}
 
+}
+
+func (r *Runner) serializeFullOutput() error {
+	specs := make([]*AgentSpec, len(r.Configuration.Agents))
+
+	r.Logger.Info(
+		"Preparing AgentSpecs for output",
+	)
+
+	for i, a := range r.Configuration.Agents {
+		specs[i] = NewAgentSpecFromAgent(a)
+	}
+
+	r.Logger.Info(
+		"Writing output to file",
+		zap.String("File", r.Configuration.OutputFile.Name()),
+	)
+
+	data, err := json.Marshal(&specs)
+
+	if err != nil {
+		return err
+	}
+
+	encoder, err := zstd.NewWriter(r.Configuration.OutputFile)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = encoder.Write(data)
+	if err != nil {
+		encoder.Close()
+		return err
+	}
+	encoder.Flush()
+	encoder.Close()
+	return nil
 }
 
 func (r *Runner) serializeOutput() error {
