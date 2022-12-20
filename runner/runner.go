@@ -70,16 +70,6 @@ func (r *Runner) Run() {
 //
 // This is stored as a zstd-compressed JSON file.
 func (r *Runner) serializeFullOutput() error {
-	specs := make([]*AgentSpec, len(r.Configuration.Agents))
-
-	r.Logger.Info(
-		"Preparing AgentSpecs for output",
-	)
-
-	for i, a := range r.Configuration.Agents {
-		specs[i] = NewAgentSpecFromAgent(a)
-	}
-
 	r.Logger.Info(
 		"Writing output to file",
 		zap.String("File", r.Configuration.OutputFile.Name()),
@@ -91,13 +81,20 @@ func (r *Runner) serializeFullOutput() error {
 		return err
 	}
 
+	zstdEncoder.Write([]byte("["))
+
 	encoder := json.NewEncoder(zstdEncoder)
 
-	err = encoder.Encode(&specs)
-	if err != nil {
-		zstdEncoder.Close()
-		return err
+	for _, a := range r.Configuration.Agents {
+		err = encoder.Encode(NewAgentSpecFromAgent(a))
+		if err != nil {
+			zstdEncoder.Close()
+			return err
+		}
 	}
+
+	zstdEncoder.Write([]byte("]"))
+
 	zstdEncoder.Close()
 	return nil
 }
