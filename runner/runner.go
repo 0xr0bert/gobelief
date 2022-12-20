@@ -85,12 +85,6 @@ func (r *Runner) serializeFullOutput() error {
 		zap.String("File", r.Configuration.OutputFile.Name()),
 	)
 
-	data, err := json.Marshal(&specs)
-
-	if err != nil {
-		return err
-	}
-
 	zstdEncoder, err := zstd.NewWriter(r.Configuration.OutputFile)
 
 	if err != nil {
@@ -99,7 +93,7 @@ func (r *Runner) serializeFullOutput() error {
 
 	encoder := json.NewEncoder(zstdEncoder)
 
-	err = encoder.Encode(data)
+	err = encoder.Encode(&specs)
 	if err != nil {
 		zstdEncoder.Close()
 		return err
@@ -131,25 +125,20 @@ func (r *Runner) serializeOutput() error {
 		zap.String("File", r.Configuration.OutputFile.Name()),
 	)
 
-	data, err := json.Marshal(&specs)
+	zstdEncoder, err := zstd.NewWriter(r.Configuration.OutputFile)
 
 	if err != nil {
 		return err
 	}
 
-	encoder, err := zstd.NewWriter(r.Configuration.OutputFile)
+	encoder := json.NewEncoder(zstdEncoder)
 
+	err = encoder.Encode(&specs)
 	if err != nil {
+		zstdEncoder.Close()
 		return err
 	}
-
-	_, err = encoder.Write(data)
-	if err != nil {
-		encoder.Close()
-		return err
-	}
-	encoder.Flush()
-	encoder.Close()
+	zstdEncoder.Close()
 	return nil
 }
 
