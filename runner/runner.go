@@ -85,11 +85,24 @@ func (r *Runner) serializeFullOutput() error {
 
 	encoder := json.NewEncoder(zstdEncoder)
 
-	for _, a := range r.Configuration.Agents {
+	nAgents := len(r.Configuration.Agents)
+	lastAgent := nAgents - 1
+
+	for i, a := range r.Configuration.Agents {
 		err = encoder.Encode(NewAgentSpecFromAgent(a))
+		if i != lastAgent {
+			zstdEncoder.Write([]byte(","))
+		}
 		if err != nil {
 			zstdEncoder.Close()
 			return err
+		}
+		if i != lastAgent {
+			_, err := zstdEncoder.Write([]byte(","))
+			if err != nil {
+				zstdEncoder.Close()
+				return err
+			}
 		}
 	}
 
