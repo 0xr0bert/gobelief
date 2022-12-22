@@ -115,8 +115,8 @@ func (spec *AgentSpec) ToAgent(
 	a.Uuid = spec.Uuid
 
 	uuidBehaviours := make(map[uuid.UUID]*b.Behaviour)
-	for _, b := range behaviours {
-		uuidBehaviours[b.Uuid] = b
+	for _, behaviour := range behaviours {
+		uuidBehaviours[behaviour.Uuid] = behaviour
 	}
 
 	for time, actionUuid := range spec.Actions {
@@ -127,8 +127,8 @@ func (spec *AgentSpec) ToAgent(
 	}
 
 	uuidBeliefs := make(map[uuid.UUID]*b.Belief)
-	for _, b := range beliefs {
-		uuidBeliefs[b.Uuid] = b
+	for _, belief := range beliefs {
+		uuidBeliefs[belief.Uuid] = belief
 	}
 
 	for time, acts := range spec.Activations {
@@ -240,9 +240,9 @@ func NewOutputSpecs(
 
 		middleIndex := nAgents / 2
 
-		for uuid, acts := range activationsByUuid {
+		for u, acts := range activationsByUuid {
 			sort.Float64s(acts)
-			o.MedianActivation[uuid] = acts[middleIndex]
+			o.MedianActivation[u] = acts[middleIndex]
 		}
 
 		// Calculate non zero activation count
