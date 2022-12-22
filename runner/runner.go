@@ -219,10 +219,10 @@ func (r *Runner) agentPerformAction(agent *b.Agent, time b.SimTime) {
 	}
 	unnormalizedProbs := make([]probPair, len(r.Configuration.Behaviours))
 
-	for i, b := range r.Configuration.Behaviours {
-		unnormalizedProbs[i].behaviour = b
+	for i, behaviour := range r.Configuration.Behaviours {
+		unnormalizedProbs[i].behaviour = behaviour
 		for _, belief := range r.Configuration.Beliefs {
-			prs := r.Configuration.Prs[belief][b]
+			prs := r.Configuration.Prs[belief][behaviour]
 			activation := agent.Activations[time][belief]
 			unnormalizedProbs[i].value += prs * activation
 		}
