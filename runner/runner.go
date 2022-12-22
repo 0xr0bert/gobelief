@@ -90,9 +90,6 @@ func (r *Runner) serializeFullOutput() error {
 
 	for i, a := range r.Configuration.Agents {
 		err = encoder.Encode(NewAgentSpecFromAgent(a))
-		if i != lastAgent {
-			zstdEncoder.Write([]byte(","))
-		}
 		if err != nil {
 			zstdEncoder.Close()
 			return err
