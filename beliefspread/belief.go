@@ -25,7 +25,7 @@ type Belief struct {
 	Relationship map[*Belief]float64
 }
 
-// Create a new belief.
+// NewBelief creates a new belief.
 //
 // This belief will have the supplied name, and a randomly generated UUID.
 func NewBelief(name string) (b *Belief) {

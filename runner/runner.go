@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// The configuration of the simulation.
+// Configuration defines the configuration of the simulation.
 type Configuration struct {
 	// The behaviours in the simulation.
 	Behaviours []*b.Behaviour
@@ -31,7 +31,7 @@ type Configuration struct {
 	FullOutput bool
 }
 
-// The simulation runner.
+// Runner defines the runner of the simulation.
 type Runner struct {
 	// The configuration.
 	Configuration *Configuration

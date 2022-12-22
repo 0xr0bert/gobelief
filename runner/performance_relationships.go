@@ -5,13 +5,13 @@ import (
 	"github.com/google/uuid"
 )
 
-// The relationship which defines how holding a belief affects the probability of
+// PerformanceRelationships defines the relationship which defines how holding a belief affects the probability of
 // performing a behaviour.
 //
 // The value should be in the range [-1,+1]
 type PerformanceRelationships map[*b.Belief]map[*b.Behaviour]float64
 
-// This converts a slice of PerformanceRelationshipSpecs (i.e., what was read
+// PRSSpecToPerformanceRelationships converts a slice of PerformanceRelationshipSpecs (i.e., what was read
 // from JSON) to PerformanceRelationships.
 //
 // This takes the Beliefs (using a map from their UUID to the object) and

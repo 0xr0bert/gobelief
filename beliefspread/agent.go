@@ -27,7 +27,7 @@ type Agent struct {
 	Deltas map[*Belief]float64
 }
 
-// Create a new agent with a randomly generated UUID.
+// NewAgent creates a new agent with a randomly generated UUID.
 func NewAgent() (a *Agent) {
 	a = new(Agent)
 	a.Uuid, _ = uuid.NewRandom()
@@ -39,7 +39,7 @@ func NewAgent() (a *Agent) {
 	return
 }
 
-// Gets the weighted relationship between two beliefs.
+// WeightedRelationship gets the weighted relationship between two beliefs.
 //
 // This is the compatibility for holding b2, given that the Agent already holds
 // b1.
@@ -67,7 +67,7 @@ func (a *Agent) WeightedRelationship(t SimTime, b1 *Belief, b2 *Belief) *float64
 	return &returnVal
 }
 
-// Gets the context for holding the Belief b
+// Contextualise gets the context for holding the Belief b
 //
 // This is the compatibility for holding b, given that the Agent all the beliefs
 // the agent holds.
@@ -93,7 +93,7 @@ func (a *Agent) Contextualise(t SimTime, b *Belief, beliefs []*Belief) (context 
 	return
 }
 
-// Gets the actions of the agent's friends at a given time.
+// GetActionsOfFriends gets the actions of the agent's friends at a given time.
 //
 // The key is the behaviour, the value is the total weight of friends who
 // performed that behaviour.
@@ -109,7 +109,7 @@ func (a *Agent) GetActionsOfFriends(t SimTime) (actions map[*Behaviour]float64) 
 	return
 }
 
-// Gets the pressure the Agent feels to adopt a Belief given the actions of
+// Pressure gets the pressure the Agent feels to adopt a Belief given the actions of
 // their friends.
 //
 // This does not take into account the context of the Belief.
@@ -132,7 +132,7 @@ func (a *Agent) Pressure(
 	return
 }
 
-// Gets the change in activation for the Agent as a result of observed
+// ActivationChange gets the change in activation for the Agent as a result of observed
 // Behaviour.
 //
 // This does take into account the context of the Belief.
@@ -168,7 +168,7 @@ func Max(a, b float64) float64 {
 	}
 }
 
-// Update the activation for a given belief and time, given the actions of
+// UpdateActivation updates the activation for a given belief and time, given the actions of
 // the agents friends.
 func (a *Agent) UpdateActivation(
 	time SimTime,
@@ -208,7 +208,7 @@ func (a *Agent) UpdateActivation(
 	return nil
 }
 
-// Update the activation for all beliefs at a given time.
+// UpdateActivationForAllBeliefs updates the activation for all beliefs at a given time.
 func (a *Agent) UpdateActivationForAllBeliefs(
 	time SimTime,
 	beliefs []*Belief,

@@ -12,7 +12,7 @@ type Behaviour struct {
 	Uuid uuid.UUID
 }
 
-// Create a new behaviour.
+// NewBehaviour creates a new behaviour.
 // Name is the name of the behaviour.
 //
 // This behaviour will have a randomly generated UUID.
