@@ -5,17 +5,19 @@ import (
 	"github.com/google/uuid"
 )
 
-// The relationship which defines how holding a belief affects the chance of
+// The relationship which defines how holding a belief affects the probability of
 // performing a behaviour.
 //
 // The value should be in the range [-1,+1]
 type PerformanceRelationships map[*b.Belief]map[*b.Behaviour]float64
 
-// This converts an slice of PerformanceRelationshipSpecs (i.e., what was read
+// This converts a slice of PerformanceRelationshipSpecs (i.e., what was read
 // from JSON) to PerformanceRelationships.
 //
 // This takes the Beliefs (using a map from their UUID to the object) and
 // Behaviours (using a map from their UUID to the object).
+//
+//goland:noinspection SpellCheckingInspection
 func PRSSpecToPerformanceRelationships(
 	prss []PerformanceRelationshipSpec,
 	beliefs map[uuid.UUID]*b.Belief,

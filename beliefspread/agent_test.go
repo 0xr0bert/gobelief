@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestNewAgentAssingnsRandomUUID(t *testing.T) {
+func TestNewAgentAssignsRandomUUID(t *testing.T) {
 	a1 := NewAgent()
 	a2 := NewAgent()
 	if a1.Uuid == a2.Uuid {
@@ -536,7 +536,7 @@ func TestUpdateActivationWhenNewValueTooLow(t *testing.T) {
 	// Activation change is 0.10625
 	agent.Deltas[belief] = -1000000
 
-	// This is a total cheat to force activation really low, oficially delta
+	// This is a total cheat to force activation really low, officially delta
 	// cannot be less than 0, but it doesn't really matter.
 
 	actions := agent.GetActionsOfFriends(2)

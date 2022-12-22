@@ -12,7 +12,7 @@ type Belief struct {
 	Uuid uuid.UUID
 	// The perception of the belief to a behaviour.
 	//
-	// The perceiption is the amount an agent performing the behaviour can be
+	// The perception is the amount an agent performing the behaviour can be
 	// assumed to be driven by the belief.
 	//
 	// This should be a value between -1 and +1.
