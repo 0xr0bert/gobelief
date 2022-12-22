@@ -81,7 +81,11 @@ func (r *Runner) serializeFullOutput() error {
 		return err
 	}
 
-	zstdEncoder.Write([]byte("["))
+	_, err = zstdEncoder.Write([]byte("["))
+
+	if err != nil {
+		return err
+	}
 
 	encoder := json.NewEncoder(zstdEncoder)
 
@@ -91,21 +95,34 @@ func (r *Runner) serializeFullOutput() error {
 	for i, a := range r.Configuration.Agents {
 		err = encoder.Encode(NewAgentSpecFromAgent(a))
 		if err != nil {
-			zstdEncoder.Close()
+			err2 := zstdEncoder.Close()
+			if err2 != nil {
+				return err2
+			}
 			return err
 		}
 		if i != lastAgent {
 			_, err := zstdEncoder.Write([]byte(","))
 			if err != nil {
-				zstdEncoder.Close()
+				err2 := zstdEncoder.Close()
+				if err2 != nil {
+					return err2
+				}
 				return err
 			}
 		}
 	}
 
-	zstdEncoder.Write([]byte("]"))
+	_, err = zstdEncoder.Write([]byte("]"))
 
-	zstdEncoder.Close()
+	if err != nil {
+		return err
+	}
+
+	err = zstdEncoder.Close()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -142,10 +159,16 @@ func (r *Runner) serializeOutput() error {
 
 	err = encoder.Encode(&specs)
 	if err != nil {
-		zstdEncoder.Close()
+		err2 := zstdEncoder.Close()
+		if err2 != nil {
+			return err2
+		}
 		return err
 	}
-	zstdEncoder.Close()
+	err = zstdEncoder.Close()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -170,7 +193,13 @@ func (r *Runner) tick(time b.SimTime) {
 // step.
 func (r *Runner) perceiveBeliefs(time b.SimTime) {
 	for _, a := range r.Configuration.Agents {
-		a.UpdateActivationForAllBeliefs(time, r.Configuration.Beliefs)
+		err := a.UpdateActivationForAllBeliefs(time, r.Configuration.Beliefs)
+		if err != nil {
+			r.Logger.Error(
+				"Error updating beliefs",
+				zap.Error(err),
+			)
+		}
 	}
 }
 
