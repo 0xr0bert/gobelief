@@ -239,7 +239,7 @@ func (r *Runner) agentPerformAction(agent *b.Agent, time b.SimTime) {
 	} else {
 		var filteredProbs []probPair
 		for _, p := range unnormalizedProbs {
-			if p.value > 0.0 {
+			if p.value >= 0.0 {
 				filteredProbs = append(filteredProbs, p)
 			}
 		}
